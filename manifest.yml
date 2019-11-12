@@ -1,0 +1,10 @@
+applications:
+  - name: slavek-flask-cf-sample
+    memory: 128MB
+    disk_quota: 256MB
+    random-route: true
+    instances: 1
+    buildpacks:
+      - python_buildpack
+    services:
+      - PG-slavek-flask-cf-sample
