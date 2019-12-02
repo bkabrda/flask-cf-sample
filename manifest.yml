@@ -8,4 +8,5 @@ applications:
       - python_buildpack
     services:
       - PG-slavek-flask-cf-sample
+      - RMQ-slavek-flask-cf-sample
       - JUST_TESTING
