@@ -1,12 +1,73 @@
 applications:
-  - name: slavek-flask-cf-sample
+  - name: slavek-flask-cf-sample-new
     memory: 128MB
     disk_quota: 256MB
     random-route: true
-    instances: 1
+    instances: 2
     buildpacks:
       - python_buildpack
     services:
-      - PG-slavek-flask-cf-sample
+      - PG-slavek-flask-cf-sample-new
       - RMQ-slavek-flask-cf-sample
-      - JUST_TESTING
+    metadata:
+      annotations:
+        asd: sdf
+        my-annotation: my-annotation-value
+      labels:
+        dfg: fgh
+        my-label: my-label-value
+    env:
+      # TODO: user-provided
+      AD_DATADOGHQ_COM: |
+        {
+            "flask-app": {
+                "check_names": ["http_check"],
+                "init_configs": [{}],
+                "instances": [
+                    {
+                        "name": "My Flask app",
+                        "url": "http://%%host%%:%%port_p8080%%",
+                        "timeout": 1,
+                        "tags": ["slaveksnewapp:true"]
+                    }
+                ]
+            },
+            "PG-slavek-flask-cf-sample-new": {
+                "check_names": ["postgres"],
+                "init_configs": [{}],
+                "instances": [
+                    {
+                        "host": "%%host%%",
+                        "port": 5432,
+                        "username": "%%username%%",
+                        "dbname": "%%dbname%%",
+                        "password": "%%password%%",
+                        "tags": ["slaveksnewapp:true"]
+                    }
+                ],
+                "variables": {
+                    "host": "$.credentials.host",
+                    "username": "$.credentials.Username",
+                    "password": "$.credentials.Password",
+                    "dbname": "$.credentials.database_name"
+                }
+            },
+            "RMQ-slavek-flask-cf-sample": {
+                "check_names": ["rabbitmq"],
+                "init_configs": [{}],
+                "instances": [
+                    {
+                        "rabbitmq_api_url": "%%api_url%%",
+                        "username": "%%username%%",
+                        "password": "%%password%%",
+                        "tls_verify": false,
+                        "tags": ["slaveksnewapp:true"]
+                    }
+                ],
+                "variables": {
+                    "api_url": "$.credentials.http_api_uri",
+                    "password": "$.credentials.password",
+                    "username": "$.credentials.username"
+                }
+            }
+        }
